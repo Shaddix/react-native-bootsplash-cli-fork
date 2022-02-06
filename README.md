@@ -2,8 +2,11 @@
 
 This is a fork of [react-native-bootsplash](https://github.com/zoontek/react-native-bootsplash) CLI.
 Fork allows generating dark mode splash screens.
+Fork is based on original react-native-bootsplash CLI with following changes:
+- New parameter: --dark-logo-path [path], allows to specify different logo for dark mode themes 
+- New parameter: --dark-background-color [color], allows to specify different background color for dark mode themes 
 
-Note: this is NOT a fork/replacement of react-native-bootsplash! You still need to install and configure [react-native-bootsplash according to instructions](https://github.com/zoontek/react-native-bootsplash#ios-1).
+Note: this is NOT a fork/replacement of react-native-bootsplash itself! You still need to install and configure [react-native-bootsplash according to instructions](https://github.com/zoontek/react-native-bootsplash#ios-1).
 This library could be used as a replacement of [Assets generation
 ](https://github.com/zoontek/react-native-bootsplash#assets-generation) step.
 
