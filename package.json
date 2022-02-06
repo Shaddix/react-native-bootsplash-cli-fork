@@ -1,6 +1,6 @@
 {
   "name": "react-native-bootsplash-cli-fork",
-  "version": "4.1.2",
+  "version": "4.1.3",
   "license": "MIT",
   "description": "Fork of CLI for generating assets for react-native-bootsplash.",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
