@@ -1,5 +1,11 @@
 # react-native-bootsplash-cli-fork
 
+[![npm version](https://badge.fury.io/js/react-native-bootsplash-cli-fork.svg)](https://www.npmjs.org/package/react-native-bootsplash-cli-fork)
+[![npm](https://img.shields.io/npm/dt/react-native-bootsplash-cli-fork.svg)](https://www.npmjs.org/package/react-native-bootsplash-cli-fork)
+[![MIT](https://img.shields.io/dub/l/vibe-d.svg)](https://opensource.org/licenses/MIT)
+[![Platform - Android](https://img.shields.io/badge/platform-Android-3ddc84.svg?style=flat&logo=android)](https://www.android.com)
+[![Platform - iOS](https://img.shields.io/badge/platform-iOS-000.svg?style=flat&logo=apple)](https://developer.apple.com/ios)
+
 This is a fork of [react-native-bootsplash](https://github.com/zoontek/react-native-bootsplash) CLI.
 Fork allows generating dark mode splash screens.
 Fork is based on original react-native-bootsplash CLI with following changes:
