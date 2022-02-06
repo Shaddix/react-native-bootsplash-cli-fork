@@ -1,0 +1,14 @@
+{
+  "name": "react-native-bootsplash-cli-fork",
+  "package-specs": {
+    "module": "es6",
+    "in-source": true
+  },
+  "suffix": ".bs.js",
+  "sources": [
+    {
+      "dir": ".",
+      "subdirs": false
+    }
+  ]
+}
