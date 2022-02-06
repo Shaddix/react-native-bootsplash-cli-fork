@@ -3,7 +3,7 @@
   "version": "4.1.2",
   "license": "MIT",
   "description": "Fork of CLI for generating assets for react-native-bootsplash.",
-  "author": "Artur Drobinskiy <artur.drobinskiy@gmail.com>",
+  "author": "Mathieu Acthernoene <zoontek@gmail.com>",
   "homepage": "https://github.com/shaddix/react-native-bootsplash-cli-fork",
   "main": "dist/commonjs/index.js",
   "module": "dist/module/index.js",
