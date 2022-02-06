@@ -1,6 +1,6 @@
 {
   "name": "react-native-bootsplash-cli-fork",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "license": "MIT",
   "description": "Fork of CLI for generating assets for react-native-bootsplash.",
   "author": "Artur Drobinskiy <artur.drobinskiy@gmail.com>",
@@ -34,7 +34,8 @@
   "scripts": {
     "format": "prettier '**/*.{js,json,md,ts,tsx}' --write",
     "setup-hooks": "git config --local core.hooksPath .hooks",
-    "prepare": "yarn setup-hooks && bob build"
+    "prepare": "yarn setup-hooks && bob build",
+    "do-publish": "yarn publish"
   },
   "react-native-builder-bob": {
     "source": "src",
