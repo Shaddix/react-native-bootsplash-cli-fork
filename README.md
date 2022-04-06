@@ -109,6 +109,7 @@ If you want to have different splashscreen in Dark Mode, also create/edit the `a
   <!-- BootTheme should inherit from Theme.SplashScreen -->
   <style name="BootTheme" parent="Theme.SplashScreen">
     <item name="windowSplashScreenAnimatedIcon">@mipmap/bootsplash_logo_dark</item>
+    <item name="windowSplashScreenBackground">@color/bootsplash_background</item>
     <item name="postSplashScreenTheme">@style/AppTheme</item>
   </style>
 
