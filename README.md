@@ -77,7 +77,8 @@ assets/bootsplash_logo_dark@2x.png
 assets/bootsplash_logo_dark@3x.png
 assets/bootsplash_logo_dark@4x.png
 
-android/app/src/main/res/values/colors.xml (creation and edition)
+android/app/src/main/res/values/colors.xml (creation and addition)
+android/app/src/main/res/values-night/colors.xml
 android/app/src/main/res/mipmap-hdpi/bootsplash_logo.png
 android/app/src/main/res/mipmap-mdpi/bootsplash_logo.png
 android/app/src/main/res/mipmap-xhdpi/bootsplash_logo.png
