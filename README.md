@@ -9,7 +9,7 @@
 This is a fork of [react-native-bootsplash](https://github.com/zoontek/react-native-bootsplash) CLI.
 Fork allows generating dark mode splash screens.
 Fork is based on original react-native-bootsplash CLI with following changes:
-- New parameter: --dark-logo-path [path], allows to specify different logo for dark mode themes 
+- New parameter: --dark-logo [path], allows to specify different logo for dark mode themes 
 - New parameter: --dark-background-color [color], allows to specify different background color for dark mode themes 
 
 Note: this is NOT a fork/replacement of react-native-bootsplash itself! You still need to install and configure [react-native-bootsplash according to instructions](https://github.com/zoontek/react-native-bootsplash#ios-1).
@@ -46,7 +46,7 @@ Options:
   --logo-width <width>             logo width at @1x (in dp - we recommend approximately ~100) (default: 100)
   --assets-path [path]             path to your static assets directory (useful to require the logo file in JS)
   --flavor <flavor>                [android only] flavor build variant (outputs in an android resource directory other than "main")
-  --dark-logo-path [path]          [optional] if specified, will be used for splashscreen that is shown when phone is in dark mode
+  --dark-logo [path]          [optional] if specified, will be used for splashscreen that is shown when phone is in dark mode
   --dark-background-color <color>  [optional] color used as launch screen background when phone is in dark mode (in hexadecimal format) (default: "#000"). Only used if --dark-logo-path is set!
   -h, --help                  output usage information
 ```
@@ -56,6 +56,7 @@ Options:
 ```bash
 yarn react-native generate-bootsplash assets/bootsplash_logo_original.png \
   --background-color=F5FCFF \
+  --dark-logo=assets/bootsplash_logo_dark.png \
   --logo-width=100 \
   --assets-path=assets \
   --flavor=main
@@ -76,7 +77,8 @@ assets/bootsplash_logo_dark@2x.png
 assets/bootsplash_logo_dark@3x.png
 assets/bootsplash_logo_dark@4x.png
 
-android/app/src/main/res/values/colors.xml (creation and edition)
+android/app/src/main/res/values/colors.xml (creation and addition)
+android/app/src/main/res/values-night/colors.xml
 android/app/src/main/res/mipmap-hdpi/bootsplash_logo.png
 android/app/src/main/res/mipmap-mdpi/bootsplash_logo.png
 android/app/src/main/res/mipmap-xhdpi/bootsplash_logo.png
@@ -107,6 +109,7 @@ If you want to have different splashscreen in Dark Mode, also create/edit the `a
   <!-- BootTheme should inherit from Theme.SplashScreen -->
   <style name="BootTheme" parent="Theme.SplashScreen">
     <item name="windowSplashScreenAnimatedIcon">@mipmap/bootsplash_logo_dark</item>
+    <item name="windowSplashScreenBackground">@color/bootsplash_background</item>
     <item name="postSplashScreenTheme">@style/AppTheme</item>
   </style>
 
