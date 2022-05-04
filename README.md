@@ -19,9 +19,9 @@ This library could be used as a replacement of [Assets generation
 ## Installation
 
 ```bash
-$ npm install --save react-native-bootsplash-cli-fork
+$ npm install --save-dev react-native-bootsplash-cli-fork
 # --- or ---
-$ yarn add react-native-bootsplash-cli-fork
+$ yarn add -D react-native-bootsplash-cli-fork
 ```
 
 ## Usage
