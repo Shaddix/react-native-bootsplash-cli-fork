@@ -1,6 +1,6 @@
 {
   "name": "react-native-bootsplash-cli-fork",
-  "version": "4.1.5",
+  "version": "4.3.2",
   "license": "MIT",
   "description": "Fork of CLI for generating assets for react-native-bootsplash.",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
@@ -60,16 +60,22 @@
     "fs-extra": "^10.0.0",
     "jimp": "^0.16.1"
   },
+  "overrides": {
+    "jpeg-js": "0.4.4"
+  },
+  "resolutions": {
+    "jpeg-js": "0.4.4"
+  },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
-    "@types/react-native": "^0.66.12",
-    "lint-staged": "^12.1.7",
-    "prettier": "^2.5.1",
-    "prettier-plugin-organize-imports": "^2.3.4",
-    "react": "^17.0.2",
-    "react-native": "^0.66.4",
-    "react-native-builder-bob": "^0.18.2",
+    "@types/react-native": "^0.69.5",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
+    "prettier-plugin-organize-imports": "^3.0.3",
+    "react": "^18.0.0",
+    "react-native": "^0.69.4",
+    "react-native-builder-bob": "^0.18.3",
     "rescript": "^9.1.4",
-    "typescript": "^4.5.4"
+    "typescript": "^4.7.4"
   }
 }

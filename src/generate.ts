@@ -247,9 +247,6 @@ export const generate = async ({
   flavor: string;
   logoWidth: number;
 }) => {
-  if (ios) {
-    ios.projectPath = ios.projectPath.replace(/.xcodeproj$/, "");
-  }
 
   await generateSingle({
     android,
