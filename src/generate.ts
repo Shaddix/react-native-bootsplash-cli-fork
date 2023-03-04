@@ -1,14 +1,13 @@
 import chalk from "chalk";
 import fs from "fs-extra";
-import Jimp from "jimp";
 import path from "path";
+import pc from "picocolors";
+import sharp from "sharp";
 
 const lightLogoFileName = "bootsplash_logo";
 const darkLogoFileName = "bootsplash_logo_dark";
 const logoAssetName = "BootSplashLogo";
 const colorAssetName = "SplashColor";
-// https://github.com/androidx/androidx/blob/androidx-main/core/core-splashscreen/src/main/res/values/dimens.xml#L22
-const splashScreenIconSizeNoBackground = 288;
 const androidColorName = "bootsplash_background";
 const androidColorRegex = /<color name="bootsplash_background">#\w+<\/color>/g;
 
@@ -198,8 +197,10 @@ const getStoryboard = ({
 `;
 };
 
-const log = (text: string, dim = false) => {
-  console.log(dim ? chalk.dim(text) : text);
+const log = {
+  error: (text: string) => console.log(pc.red(text)),
+  text: (text: string) => console.log(text),
+  warn: (text: string) => console.log(pc.yellow(text)),
 };
 
 const logWriteGlobal = (
@@ -208,7 +209,7 @@ const logWriteGlobal = (
   workingPath: string,
   dimensions?: { width: number; height: number },
 ) =>
-  log(
+  log.text(
     `${emoji}  ${path.relative(workingPath, filePath)}` +
       (dimensions != null ? ` (${dimensions.width}x${dimensions.height})` : ""),
   );
@@ -286,7 +287,7 @@ export const generate = async ({
     });
   }
 
-  log(`
+  log.text(`
  ${chalk.blue("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")}
  ${chalk.blue("┃")}  💖  ${chalk.bold(
     "Love this library? Consider sponsoring!",
@@ -300,7 +301,7 @@ export const generate = async ({
  ${chalk.blue("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")}
 `);
 
-  log(
+  log.text(
     `✅  Done! Thanks for using ${chalk.underline("react-native-bootsplash")}.`,
   );
 };
@@ -335,17 +336,49 @@ const generateSingle = async ({
   theme: "light" | "dark";
 }) => {
   if (!isValidHexadecimal(backgroundColor)) {
-    throw new Error(
-      "--background-color value is not a valid hexadecimal color.",
-    );
+    log.error("--background-color value is not a valid hexadecimal color.");
+    process.exit(1);
   }
 
   const logoFileName = theme === "light" ? lightLogoFileName : darkLogoFileName;
-  const image = await Jimp.read(logoPath);
+  
+  const image = sharp(logoPath);
   const backgroundColorHex = toFullHexadecimal(backgroundColor);
+  const { format } = await image.metadata();
 
-  const getHeight = (size: number) =>
-    Math.ceil(size * (image.bitmap.height / image.bitmap.width));
+  if (format !== "png" && format !== "svg") {
+    log.error("Input file is an unsupported image format");
+    process.exit(1);
+  }
+
+  const logoHeight = await image
+    .clone()
+    .resize(logoWidth)
+    .toBuffer()
+    .then((buffer) => sharp(buffer).metadata())
+    .then(({ height = 0 }) => height);
+
+  const shouldSkipAndroid = logoWidth > 288 || logoHeight > 288;
+
+  const logAbove288 = (dimension: "height" | "width") => {
+    const message = `⚠️   Logo ${dimension} exceed 288dp. As it will be cropped by Android, we skip generation for this platform.`;
+    log.warn(message);
+  };
+
+  const logAbove192 = (dimension: "height" | "width") => {
+    const message = `⚠️   Logo ${dimension} exceed 192dp. It might be cropped by Android.`;
+    log.warn(message);
+  };
+
+  if (logoWidth > 288) {
+    logAbove288("width");
+  } else if (logoHeight > 288) {
+    logAbove288("height");
+  } else if (logoWidth > 192) {
+    logAbove192("width");
+  } else if (logoHeight > 192) {
+    logAbove192("height");
+  }
 
   const logWrite = (
     emoji: string,
@@ -354,7 +387,7 @@ const generateSingle = async ({
   ) => logWriteGlobal(emoji, filePath, workingPath, dimensions);
 
   if (assetsPath && fs.existsSync(assetsPath)) {
-    log(`\n    ${chalk.underline("Assets")}`);
+    log.text(`\n    ${chalk.underline("Assets")}`);
 
     await Promise.all(
       [
@@ -366,23 +399,22 @@ const generateSingle = async ({
       ].map(({ ratio, suffix }) => {
         const fileName = `${logoFileName}${suffix}.png`;
         const filePath = path.resolve(assetsPath, fileName);
-        const width = logoWidth * ratio;
-        const height = getHeight(width);
 
         return image
           .clone()
-          .resize(width, height)
-          .quality(100)
-          .writeAsync(filePath)
-          .then(() => {
+          .resize(logoWidth * ratio)
+          .png({ quality: 100 })
+          .toFile(filePath)
+          .then(({ width, height }) => {
             logWrite("✨", filePath, { width, height });
           });
       }),
     );
   }
 
-  if (android) {
-    log(`\n    ${chalk.underline("Android")}`);
+  if (android && !shouldSkipAndroid) {
+    log.text(`\n    ${pc.underline("Android")}`);
+
 
     const appPath = android.appName
       ? path.resolve(android.sourceDir, android.appName)
@@ -440,22 +472,34 @@ const generateSingle = async ({
       ].map(({ ratio, directory }) => {
         const fileName = `${logoFileName}.png`;
         const filePath = path.resolve(resPath, directory, fileName);
-        const width = logoWidth * ratio;
-        const height = getHeight(width);
+        // https://github.com/androidx/androidx/blob/androidx-main/core/core-splashscreen/src/main/res/values/dimens.xml#L22
+        const canvasSize = 288 * ratio;
 
-        const canvasSize = splashScreenIconSizeNoBackground * ratio;
+        // https://sharp.pixelplumbing.com/api-constructor
+        const canvas = sharp({
+          create: {
+            width: canvasSize,
+            height: canvasSize,
+            channels: 4,
+            background: {
+              r: 255,
+              g: 255,
+              b: 255,
+              alpha: 0,
+            },
+          },
+        });
 
-        // https://github.com/oliver-moran/jimp/tree/master/packages/jimp#creating-new-images
-        const canvas = new Jimp(canvasSize, canvasSize, 0xffffff00);
-        const logo = image.clone().resize(width, height);
-
-        const x = (canvasSize - width) / 2;
-        const y = (canvasSize - height) / 2;
-
-        return canvas
-          .blit(logo, x, y)
-          .quality(100)
-          .writeAsync(filePath)
+        return image
+          .clone()
+          .resize(logoWidth * ratio)
+          .toBuffer()
+          .then((input) =>
+            canvas
+              .composite([{ input }])
+              .png({ quality: 100 })
+              .toFile(filePath),
+          )
           .then(() => {
             logWrite("✨", filePath, { width: canvasSize, height: canvasSize });
           });
@@ -464,7 +508,7 @@ const generateSingle = async ({
   }
 
   if (ios) {
-    log(`\n    ${chalk.underline("iOS")}`);
+    log.text(`\n    ${chalk.underline("iOS")}`);
     const projectPath = ios.projectPath;
     const imagesPath = path.resolve(projectPath, "Images.xcassets");
 
@@ -474,7 +518,7 @@ const generateSingle = async ({
       fs.writeFileSync(
         storyboardPath,
         getStoryboard({
-          height: getHeight(logoWidth),
+          height: logoHeight,
           width: logoWidth,
         }),
         "utf-8",
@@ -482,7 +526,7 @@ const generateSingle = async ({
 
       logWrite("✨", storyboardPath);
     } else {
-      log(
+      log.text(
         `No "${projectPath}" directory found. Skipping iOS storyboard generation…`,
       );
     }
@@ -502,21 +546,19 @@ const generateSingle = async ({
         ].map(({ ratio, suffix }) => {
           const fileName = `${logoFileName}${suffix}.png`;
           const filePath = path.resolve(imageSetPath, fileName);
-          const width = logoWidth * ratio;
-          const height = getHeight(width);
 
           return image
             .clone()
-            .resize(width, height)
-            .quality(100)
-            .writeAsync(filePath)
-            .then(() => {
+            .resize(logoWidth * ratio)
+            .png({ quality: 100 })
+            .toFile(filePath)
+            .then(({ width, height }) => {
               logWrite("✨", filePath, { width, height });
             });
         }),
       );
     } else {
-      log(
+      log.text(
         `No "${imagesPath}" directory found. Skipping iOS images generation…`,
       );
     }
